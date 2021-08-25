@@ -87,6 +87,7 @@ public class TextAnswerEvent implements MessageCreateListener {
                     }else{
                         answerObject.setReplyByIndex(storyID, new ReplyPackage(storyObject, schoolAbberMap.get(upperAns)));
                         StoryEvent.answerMap.put(author.getIdAsString(), answerObject);
+                        StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext(), null);
                     }
                     return;
                 }
@@ -102,10 +103,11 @@ public class TextAnswerEvent implements MessageCreateListener {
                     return;
                 }
 
-                /* 特判Story=9的情況，要把名子輸入到Story=3 */
+                /* 特判StoryID=9的情況，要把名子輸入到StoryID=3 */
                 if(storyID == 9){
                     answerObject.setReplyByIndex(3, new ReplyPackage(storyObject, answer));
                     StoryEvent.answerMap.put(author.getIdAsString(), answerObject);
+                    return;
                 }
 
                 /* 繼續執行故事線 */
