@@ -14,10 +14,11 @@ public class YNStoryObject extends StoryObject{
     int ifNo;
     int returnStoryIndex;
 
-    public YNStoryObject(int index, String message, String type, String yesEmoji, String noEmoji, String returnEmoji, int ifYes, int ifNo, int returnStoryIndex){
+    public YNStoryObject(int index, String message, String plainMessage, String type, String yesEmoji, String noEmoji, String returnEmoji, int ifYes, int ifNo, int returnStoryIndex){
         this.yesEmoji = yesEmoji;
         this.noEmoji = noEmoji;
         this.returnEmoji = returnEmoji;
+        this.plainMessage = plainMessage;
         this.message = message;
         this.type = type;
         this.index = index;
@@ -32,6 +33,10 @@ public class YNStoryObject extends StoryObject{
 
     public int getIfNo(){
         return ifNo;
+    }
+
+    public String getPlainMessage(){
+        return plainMessage;
     }
 
     public int getReturnStoryIndex(){

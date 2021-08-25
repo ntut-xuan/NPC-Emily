@@ -23,6 +23,11 @@ public class AddReactionEvent implements MessageCreateListener {
         }
 
         Message message = event.getMessage();
+
+        if(message.getEmbeds().size() == 0){
+            return;
+        }
+
         Embed embed = message.getEmbeds().get(0);
         Optional<EmbedFooter> embedFooterOptional = embed.getFooter();
 

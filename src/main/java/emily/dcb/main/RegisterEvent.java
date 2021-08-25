@@ -1,8 +1,6 @@
 package emily.dcb.main;
 
-import emily.dcb.event.AddReactionEvent;
-import emily.dcb.event.ClickReactionEvent;
-import emily.dcb.event.StoryEvent;
+import emily.dcb.event.*;
 import org.javacord.api.DiscordApi;
 
 public class RegisterEvent {
@@ -11,6 +9,10 @@ public class RegisterEvent {
         api.addMessageCreateListener(new StoryEvent());
         api.addMessageCreateListener(new AddReactionEvent());
         api.addReactionAddListener(new ClickReactionEvent());
+        api.addMessageCreateListener(new TextAnswerEvent());
+        api.addMessageCreateListener(new NTXEvent());
+        api.addMessageCreateListener(new SpyChatEvent());
+        api.addMessageCreateListener(new AdministratorEvent());
     }
 
 }

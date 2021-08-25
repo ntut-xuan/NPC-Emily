@@ -1,9 +1,7 @@
 package emily.dcb.event;
 
 import emily.dcb.database.StoryDatabase;
-import emily.dcb.utils.StoryObject;
-import emily.dcb.utils.TYStoryObject;
-import emily.dcb.utils.YNStoryObject;
+import emily.dcb.utils.*;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.emoji.Emoji;
 import org.javacord.api.entity.message.Message;
@@ -21,27 +19,22 @@ public class ClickReactionEvent implements ReactionAddListener {
     @Override
     public void onReactionAdd(ReactionAddEvent reactionAddEvent) {
 
-//        System.out.println("clicked");
-
         TextChannel textChannel = reactionAddEvent.getChannel();
         Optional<User> optionalUser = reactionAddEvent.getUser();
 
         if(optionalUser.isEmpty()){
-//            System.out.println("user is empty, return");
             return;
         }
 
         User user = optionalUser.get();
 
         if(user.isYourself()){
-//            System.out.println("user is yourself, return");
             return;
         }
 
         Optional<Message> optionalMessage = reactionAddEvent.getMessage();
 
         if(optionalMessage.isEmpty()){
-//            System.out.println("message is empty, return");
             return;
         }
 
@@ -49,14 +42,12 @@ public class ClickReactionEvent implements ReactionAddListener {
         MessageAuthor author = message.getAuthor();
 
         if(!author.isYourself()){
-//            System.out.println("author is yourself, return");
             return;
         }
 
         Optional<Reaction> optionalReaction = reactionAddEvent.getReaction();
 
         if(optionalReaction.isEmpty()){
-//            System.out.println("no reaction, return");
             return;
         }
 
@@ -68,16 +59,13 @@ public class ClickReactionEvent implements ReactionAddListener {
         Optional<EmbedFooter> embedFooterOptional = embed.getFooter();
 
         if(embedFooterOptional.isEmpty()){
-//            System.out.println("no embed footer, return");
             return;
         }
 
         EmbedFooter footer = embedFooterOptional.get();
         Optional<String> footerText = footer.getText();
 
-
         if(footerText.isEmpty()){
-//            System.out.println("no footer text, return");
             return;
         }
 
@@ -86,17 +74,29 @@ public class ClickReactionEvent implements ReactionAddListener {
             int index = Integer.parseInt(text.split("-")[0]);
             YNStoryObject object = (YNStoryObject) StoryDatabase.getStoryObjectByIndex(index);
             if(emojiString.equals("✅")){
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfYes());
+
+                ReplyPackage replyPackage = new ReplyPackage(object, "Yes");
+                AnswerObject answerObject = StoryEvent.answerMap.getOrDefault(user.getIdAsString(), new AnswerObject(user));
+                answerObject.setReplyByIndex(index, replyPackage);
+                StoryEvent.answerMap.put(user.getIdAsString(), answerObject);
+
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfYes(), null);
             }else if(emojiString.equals("❎")){
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfNo());
+
+                ReplyPackage replyPackage = new ReplyPackage(object, "No");
+                AnswerObject answerObject = StoryEvent.answerMap.getOrDefault(user.getIdAsString(), new AnswerObject(user));
+                answerObject.setReplyByIndex(index, replyPackage);
+                StoryEvent.answerMap.put(user.getIdAsString(), answerObject);
+
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfNo(), null);
             }else if(emojiString.equals("↩")){
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex());
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex(), null);
             }
         }else if(text.split("-")[1].equals("TY")){
             int index = Integer.parseInt(text.split("-")[0]);
             TYStoryObject object = (TYStoryObject) StoryDatabase.getStoryObjectByIndex(index);
             if(emojiString.equals("↩")){
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex());
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex(), null);
             }
         }
     }
