@@ -51,11 +51,13 @@ public class LogCreator {
                 log.createNewFile();
             }
             String text = "";
-            Scanner scanner = new Scanner(log);
-            while(scanner.hasNextLine()){
-                text += scanner.nextLine() + "\n";
+            InputStream inputStream = new FileInputStream(log);
+            BufferedReader reader = new BufferedReader (new InputStreamReader(inputStream, StandardCharsets.UTF_8), 8192);
+            String temp = "";
+            while ((temp = reader.readLine()) != null) {
+                text += temp + "\n";
             }
-            scanner.close();
+            reader.close();
             text += message + "\n";
             OutputStream outputStream = new FileOutputStream(log);
             PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
