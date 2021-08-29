@@ -1,17 +1,13 @@
 package emily.dcb.event;
 
-import emily.dcb.database.EmilySettingDatabase;
-import emily.dcb.main.Main;
-import emily.dcb.utils.EmbedMessageCreator;
+import emily.dcb.utils.AnswerObject;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
-import java.nio.channels.Channel;
 import java.util.Optional;
 
 public class AdministratorEvent implements MessageCreateListener {
@@ -30,11 +26,23 @@ public class AdministratorEvent implements MessageCreateListener {
         if(serverOptional.isEmpty()) return;
 
         String content = messageCreateEvent.getMessageContent();
-        String[] splitContent = content.split(" ");
+        String[] contentSplit = content.split(" ");
         User user = userOptional.get();
         Server server = serverOptional.get();
         TextChannel channel = messageCreateEvent.getChannel();
 
+        if(author.isBotOwner() && contentSplit[0].equals("!catch")){
+            String type = contentSplit[1];
+            if(type.equals("-ui")){
+                String userID = contentSplit[2];
+                AnswerObject answerObject = StoryEvent.answerMap.get(userID);
+                channel.sendMessage(answerObject.getEmbed());
+            }else if(type.equals("-si")){
+                String studentID = contentSplit[2];
+                //search by student ID and find who is this (with black magic or something)
+                //make search embed.
+            }
+        }
 
     }
 }

@@ -38,7 +38,7 @@ public class Main {
         SchoolAbbrTableCrawler.load();
 
         Timer autoSaveTimer = new Timer();
-        autoSaveTimer.schedule(new AutoSaveTimerTask(), 0, 60000);
+        //autoSaveTimer.schedule(new AutoSaveTimerTask(), 0, 60000);
 
         System.out.println("All task has been executed.");
 

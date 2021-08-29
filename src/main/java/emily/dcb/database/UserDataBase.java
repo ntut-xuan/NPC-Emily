@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class UserDataBase {
 
-    static Map<String, String> UIDtoStudentID = new HashMap<>();
+    static Map<String, String> StudentToUID = new HashMap<>();
     static Map<String, JsonObject> UIDReply = new HashMap<>();
 
     public static void load() throws IOException {

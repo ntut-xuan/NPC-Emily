@@ -103,7 +103,8 @@ public class NTXEvent implements MessageCreateListener {
                 message.getChannel().type();
                 AnswerObject answerObject = StoryEvent.answerMap.get(String.valueOf(ID));
                 String studentID = answerObject.getReplyByIndex(2).getAnswer();
-                Pair<String, String> studentInfo = StudentInfoCrawler.getStudentNameAndClass(studentID);
+                StudentInfoCrawler sic = new StudentInfoCrawler();
+                Pair<String, String> studentInfo = sic.getStudentNameAndClass(studentID);
                 answerObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", receipient.getDiscriminatedName()));
                 answerObject.setReplyByIndex(98, new ReplyPackage("名子", studentInfo.getLeft()));
                 answerObject.setReplyByIndex(99, new ReplyPackage("班級", studentInfo.getRight()));

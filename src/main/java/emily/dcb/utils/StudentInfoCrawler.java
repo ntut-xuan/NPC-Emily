@@ -9,20 +9,32 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StudentInfoCrawler {
-    public static Pair<String, String> getStudentNameAndClass(String studentID) throws IOException, StudentIDNotFoundException {
-        Connection connection = Jsoup.connect("https://app.ntut.edu.tw/login.do?muid=109590031&mpassword=Han910625&forceMobile=app&md5Code=1111&ssoId");
-        connection = connection.header("User-Agent", "Direk Android App");
-        connection = connection.validateTLSCertificates(false);
-        connection = connection.maxBodySize(0);
-        Connection.Response response = connection.method(Connection.Method.POST).execute();
+    public Pair<String, String> getStudentNameAndClass(String studentID) throws IOException, StudentIDNotFoundException {
 
-        String ssoIndexURL = "https://app.ntut.edu.tw/ssoIndex.do?apUrl=https://aps.ntut.edu.tw/course/tw/Select.jsp&apOu=aa_0010-&sso=true&datetime1="+System.currentTimeMillis();
-        Connection ssoIndexConnection = Jsoup.connect(ssoIndexURL);
-        ssoIndexConnection = ssoIndexConnection.validateTLSCertificates(false);
+        String urlString = "https://app.ntut.edu.tw/login.do?muid=109590031&mpassword=Han910625&forceMobile=app&md5Code=1111&ssoId";
+        Connection.Response response = null;
+        Map<String, String> datas = new HashMap<>();
+        datas.put("muid", "109590031");
+        datas.put("mpassword", "Han910625");
+        datas.put("forceMobile", "app");
+        datas.put("md5Code", "1111");
+        datas.put("ssoId", "");
+        response = SSLHelper.getConnection(urlString).header("user-agent", "Direk Android App").data(datas).maxBodySize(0).method(Connection.Method.POST).execute();
+
+
+        String ssoIndexURL = "https://app.ntut.edu.tw/ssoIndex.do?apUrl=https://aps.ntut.edu.tw/course/tw/Select.jsp&apOu=aa_0010-&sso=true&datetime1=" + System.currentTimeMillis();
+        Connection ssoIndexConnection = SSLHelper.getConnection(ssoIndexURL);
         ssoIndexConnection = ssoIndexConnection.cookies(response.cookies());
         ssoIndexConnection = ssoIndexConnection.headers(response.headers());
         Document ssoIndexDocument = ssoIndexConnection.get();
@@ -31,8 +43,7 @@ public class StudentInfoCrawler {
         String userID = ssoIndexDocument.select("body > form > input[type=hidden]:nth-child(3)").attr("value");
         String userType = ssoIndexDocument.select("body > form > input[type=hidden]:nth-child(4)").attr("value");
 
-        Connection poster = Jsoup.connect("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
-        poster = poster.validateTLSCertificates(false);
+        Connection poster = SSLHelper.getConnection("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
         poster = poster.followRedirects(true);
         poster = poster.data("sessionId", sessionId);
         poster = poster.data("reqFrom", reqFrom);
@@ -42,8 +53,7 @@ public class StudentInfoCrawler {
         poster = poster.headers(response.headers());
         Connection.Response posterResponse = poster.method(Connection.Method.POST).execute();
 
-        poster = Jsoup.connect("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
-        poster = poster.validateTLSCertificates(false);
+        poster = SSLHelper.getConnection("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
         poster = poster.followRedirects(true);
         poster = poster.data("sessionId", sessionId);
         poster = poster.data("reqFrom", reqFrom);
@@ -53,8 +63,7 @@ public class StudentInfoCrawler {
         poster = poster.headers(response.headers());
         posterResponse = poster.method(Connection.Method.GET).execute();
 
-        poster = Jsoup.connect("https://aps.ntut.edu.tw/course/tw/Select.jsp");
-        poster = poster.validateTLSCertificates(false);
+        poster = SSLHelper.getConnection("https://aps.ntut.edu.tw/course/tw/Select.jsp");
         poster = poster.followRedirects(true);
         poster = poster.data("code", studentID);
         poster = poster.data("format", "-2");
@@ -70,7 +79,7 @@ public class StudentInfoCrawler {
 
         String data = element.text();
 
-        if(data.equals("")){
+        if (data.equals("")) {
             throw new StudentIDNotFoundException();
         }
 
@@ -78,18 +87,18 @@ public class StudentInfoCrawler {
 
         String temp = "";
 
-        for(int i = 0, j = 0; i < data.length(); i++){
-            if(data.charAt(i) == '：'){
+        for (int i = 0, j = 0; i < data.length(); i++) {
+            if (data.charAt(i) == '：') {
                 j = 1;
                 continue;
             }
-            if(j == 1 && data.charAt(i) == '　'){
+            if (j == 1 && data.charAt(i) == '　') {
                 j = 0;
                 list.add(temp);
                 temp = "";
                 continue;
             }
-            if(j == 1){
+            if (j == 1) {
                 temp += data.charAt(i);
             }
         }

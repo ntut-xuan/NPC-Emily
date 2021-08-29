@@ -66,19 +66,6 @@ public class StoryEvent implements MessageCreateListener {
             executeStoryByIndex(message, optionalUser.get(), channel, 1, null);
         }
 
-        if(author.isBotOwner() && contentSplit[0].equals("!catch")){
-            String type = contentSplit[1];
-            if(type.equals("-ui")){
-                String userID = contentSplit[2];
-                AnswerObject answerObject = answerMap.get(userID);
-                channel.sendMessage(answerObject.getEmbed());
-            }else if(type.equals("-si")){
-                String studentID = contentSplit[2];
-                //search by student ID and find who is this (with black magic or something)
-                //make search embed.
-            }
-        }
-
     }
 
     public static void executeStoryByIndex(Message message, User user, TextChannel channel, int index, Map<String, String> parameter){
