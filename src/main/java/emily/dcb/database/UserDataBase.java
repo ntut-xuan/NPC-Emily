@@ -21,8 +21,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class UserDataBase {
 
-    static Map<String, String> StudentToUID = new HashMap<>();
-    static Map<String, JsonObject> UIDReply = new HashMap<>();
+    public static Map<String, String> StudentToUID = new HashMap<>();
+    public static Map<String, AnswerObject> UIDAnswerObject = new HashMap<>();
 
     public static void load() throws IOException {
         File file = new File("UserData.json");
@@ -54,7 +54,22 @@ public class UserDataBase {
         JsonObject object = element.getAsJsonObject();
         Set<String> keys = object.keySet();
         for(String key : keys){
-            UIDReply.put(key, object.get(key).getAsJsonObject());
+            Optional<User> userOptional = EmilySettingDatabase.server.getMemberById(key);
+            if(userOptional.isEmpty()){
+                continue;
+            }
+            User user = userOptional.get();
+            JsonObject subObject = object.getAsJsonObject(key);
+            AnswerObject answerObject = AnswerObject.parse(user, subObject);
+            UIDAnswerObject.put(key, answerObject);
+        }
+
+        /* build studentID to discordID map */
+        for(String key : keys){
+            JsonObject subObject = object.get(key).getAsJsonObject();
+            JsonObject studentUIDJsonObject = subObject.get("學號").getAsJsonObject();
+            String studentUID = studentUIDJsonObject.get("answer").getAsString();
+            StudentToUID.put(studentUID, key);
         }
     }
 
@@ -62,8 +77,10 @@ public class UserDataBase {
         File file = new File("UserData.json");
 
         JsonObject jsonObject = new JsonObject();
-        for(Map.Entry<String, JsonObject> entry : UIDReply.entrySet()){
-            jsonObject.add(entry.getKey(), entry.getValue());
+        for(Map.Entry<String, AnswerObject> entry : UIDAnswerObject.entrySet()){
+            String UID = entry.getKey();
+            AnswerObject answerObject = entry.getValue();
+            jsonObject.add(UID, answerObject.getReplyJsonObjectFormat());
         }
 
         if(!file.exists()){
@@ -85,22 +102,18 @@ public class UserDataBase {
 
     public static void saveReply(String userID){
         AnswerObject object = StoryEvent.answerMap.get(userID);
-        JsonObject jsonObject = new JsonObject();
-        for(ReplyPackage replyPackage : object.getReplyPackageList()){
-            jsonObject.addProperty(replyPackage.getProblemStatement(), replyPackage.getAnswer());
-        }
-        UIDReply.put(userID, jsonObject);
+        UIDAnswerObject.put(userID, object);
     }
 
     public static boolean containsReply(String ID){
-        return UIDReply.containsKey(ID);
+        return UIDAnswerObject.containsKey(ID);
     }
 
     public static void checkUserMemberRole(){
         Role role = EmilySettingDatabase.memberRole;
         Server server = EmilySettingDatabase.server;
         ServerUpdater updater = new ServerUpdater(server);
-        for(String keys : UserDataBase.UIDReply.keySet()){
+        for(String keys : UserDataBase.StudentToUID.keySet()){
             Optional<User> userOptional = server.getMemberById(keys);
             if(userOptional.isEmpty()){
                 continue;

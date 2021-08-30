@@ -8,9 +8,11 @@ import emily.dcb.thread.MemberRoleCheck;
 import emily.dcb.utils.SchoolAbbrTableCrawler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.interaction.SlashCommand;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,15 +35,15 @@ public class Main {
 
         new RegisterEvent(discordApi);
 
+        EmilySettingDatabase.load();
         StoryDatabase.load();
         UserDataBase.load();
-        EmilySettingDatabase.load();
         SchoolAbbrTableCrawler.load();
 
         Timer autoSaveTimer = new Timer();
         Timer memberRoleCheckTimer = new Timer();
 
-        autoSaveTimer.schedule(new AutoSaveTimerTask(), 0, 60000);
+        autoSaveTimer.schedule(new AutoSaveTimerTask(), 0, 10000);
         memberRoleCheckTimer.schedule(new MemberRoleCheck(), 0, 10000);
 
         System.out.println("All task has been executed.");

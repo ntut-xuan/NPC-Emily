@@ -105,6 +105,7 @@ public class NTXEvent implements MessageCreateListener {
                 String studentID = answerObject.getReplyByIndex(2).getAnswer();
                 StudentInfoCrawler sic = new StudentInfoCrawler();
                 Pair<String, String> studentInfo = sic.getStudentNameAndClass(studentID);
+                answerObject.setReplyByIndex(3, new ReplyPackage("學校", SchoolAbbrTableCrawler.map.get("NTUT")));
                 answerObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", receipient.getDiscriminatedName()));
                 answerObject.setReplyByIndex(98, new ReplyPackage("名子", studentInfo.getLeft()));
                 answerObject.setReplyByIndex(99, new ReplyPackage("班級", studentInfo.getRight()));
@@ -127,6 +128,7 @@ public class NTXEvent implements MessageCreateListener {
 
                 /* send welcome photo and message */
                 AnswerObject answerObject = StoryEvent.answerMap.get(String.valueOf(ID));
+                String school = "國立臺北科技大學";
                 String discordTag = answerObject.getReplyByIndex(97).getAnswer();
                 String name = answerObject.getReplyByIndex(98).getAnswer();
                 String studentClass = answerObject.getReplyByIndex(99).getAnswer();

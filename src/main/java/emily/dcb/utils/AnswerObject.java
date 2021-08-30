@@ -1,13 +1,13 @@
 package emily.dcb.utils;
 
+import com.google.gson.JsonObject;
 import emily.dcb.database.StoryDatabase;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class AnswerObject {
 
@@ -25,6 +25,10 @@ public class AnswerObject {
 
     public void setReplyByIndex(int index, ReplyPackage replyPackage){
         map.put(index, replyPackage);
+    }
+
+    public Set<Map.Entry<Integer, ReplyPackage>> getMapEntry(){
+        return map.entrySet();
     }
 
     public List<ReplyPackage> getReplyPackageList(){
@@ -48,13 +52,36 @@ public class AnswerObject {
             embedBuilder.setTitle(title + " - 不是北科大的學生");
         }
 
-        int size = StoryDatabase.getStoryObjectCount();
+        embedBuilder.setThumbnail(user.getAvatar());
+        embedBuilder.setColor(Color.CYAN);
 
         for(Map.Entry<Integer, ReplyPackage> entry : map.entrySet()){
             ReplyPackage replyPackage = entry.getValue();
-            embedBuilder.addField(replyPackage.getProblemStatement(), replyPackage.answer);
+            embedBuilder.addInlineField(replyPackage.getProblemStatement(), replyPackage.answer);
         }
 
         return embedBuilder;
+    }
+
+    public JsonObject getReplyJsonObjectFormat(){
+        JsonObject jsonObject = new JsonObject();
+        for(Map.Entry<Integer, ReplyPackage> entry : getMapEntry()){
+            JsonObject subObject = new JsonObject();
+            subObject.addProperty("index", entry.getKey());
+            subObject.addProperty("answer", entry.getValue().getAnswer());
+            jsonObject.add(entry.getValue().getProblemStatement(), subObject);
+        }
+        return jsonObject;
+    }
+
+    public static AnswerObject parse(User user, JsonObject jsonObject){
+        AnswerObject answerObject = new AnswerObject(user);
+        for(String problemStatement : jsonObject.keySet()){
+            JsonObject replyPackage = jsonObject.get(problemStatement).getAsJsonObject();
+            int index = replyPackage.get("index").getAsInt();
+            String answer = replyPackage.get("answer").getAsString();
+            answerObject.setReplyByIndex(index, new ReplyPackage(problemStatement, answer));
+        }
+        return answerObject;
     }
 }
