@@ -22,19 +22,20 @@ import java.util.Map;
 public class StudentInfoCrawler {
     public Pair<String, String> getStudentNameAndClass(String studentID) throws IOException, StudentIDNotFoundException {
 
-        String urlString = "https://app.ntut.edu.tw/login.do?muid=109590031&mpassword=Han910625&forceMobile=app&md5Code=1111&ssoId";
-        Connection.Response response = null;
+        String urlString = "https://app.ntut.edu.tw/login.do";
         Map<String, String> datas = new HashMap<>();
         datas.put("muid", "109590031");
         datas.put("mpassword", "Han910625");
         datas.put("forceMobile", "app");
         datas.put("md5Code", "1111");
         datas.put("ssoId", "");
-        response = SSLHelper.getConnection(urlString).header("user-agent", "Direk Android App").data(datas).maxBodySize(0).method(Connection.Method.POST).execute();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("user-agent", "Direk Android App");
+        Connection.Response response = Jsoup.connect(urlString).headers(headers).data(datas).maxBodySize(0).method(Connection.Method.POST).execute();
 
 
         String ssoIndexURL = "https://app.ntut.edu.tw/ssoIndex.do?apUrl=https://aps.ntut.edu.tw/course/tw/Select.jsp&apOu=aa_0010-&sso=true&datetime1=" + System.currentTimeMillis();
-        Connection ssoIndexConnection = SSLHelper.getConnection(ssoIndexURL);
+        Connection ssoIndexConnection = Jsoup.connect(ssoIndexURL);
         ssoIndexConnection = ssoIndexConnection.cookies(response.cookies());
         ssoIndexConnection = ssoIndexConnection.headers(response.headers());
         Document ssoIndexDocument = ssoIndexConnection.get();
@@ -43,7 +44,7 @@ public class StudentInfoCrawler {
         String userID = ssoIndexDocument.select("body > form > input[type=hidden]:nth-child(3)").attr("value");
         String userType = ssoIndexDocument.select("body > form > input[type=hidden]:nth-child(4)").attr("value");
 
-        Connection poster = SSLHelper.getConnection("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
+        Connection poster = Jsoup.connect("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
         poster = poster.followRedirects(true);
         poster = poster.data("sessionId", sessionId);
         poster = poster.data("reqFrom", reqFrom);
@@ -53,7 +54,7 @@ public class StudentInfoCrawler {
         poster = poster.headers(response.headers());
         Connection.Response posterResponse = poster.method(Connection.Method.POST).execute();
 
-        poster = SSLHelper.getConnection("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
+        poster = Jsoup.connect("https://aps.ntut.edu.tw/course/tw/courseSID.jsp");
         poster = poster.followRedirects(true);
         poster = poster.data("sessionId", sessionId);
         poster = poster.data("reqFrom", reqFrom);
@@ -63,7 +64,7 @@ public class StudentInfoCrawler {
         poster = poster.headers(response.headers());
         posterResponse = poster.method(Connection.Method.GET).execute();
 
-        poster = SSLHelper.getConnection("https://aps.ntut.edu.tw/course/tw/Select.jsp");
+        poster = Jsoup.connect("https://aps.ntut.edu.tw/course/tw/Select.jsp");
         poster = poster.followRedirects(true);
         poster = poster.data("code", studentID);
         poster = poster.data("format", "-2");
