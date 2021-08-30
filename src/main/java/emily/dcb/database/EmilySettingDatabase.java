@@ -7,7 +7,9 @@ import emily.dcb.main.Main;
 import emily.dcb.utils.LogCreator;
 import org.apache.commons.logging.Log;
 import org.javacord.api.entity.channel.Channel;
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.w3c.dom.Text;
 
@@ -22,6 +24,7 @@ public class EmilySettingDatabase {
 
     public static Server server;
     public static TextChannel welcomeChannel;
+    public static Role memberRole;
 
     public static void load() {
 
@@ -38,6 +41,7 @@ public class EmilySettingDatabase {
                 JsonObject object = new JsonObject();
                 object.addProperty("serverID", "");
                 object.addProperty("welcomeChannelID", "");
+                object.addProperty("memberRoleID", "");
 
                 PrintWriter printWriter = new PrintWriter(file);
                 printWriter.println(object.toString());
@@ -76,6 +80,13 @@ public class EmilySettingDatabase {
 
             String welcomeChannelID = object.get("welcomeChannelID").getAsString();
 
+            if (object.get("memberRoleID").getAsString().equals("")){
+                LogCreator.error("檢測狀態：memberRoleID尚未設置，請設置才能得到完整功能");
+                return;
+            }
+
+            String memberRoleID = object.get("memberRoleID").getAsString();
+
             Optional<Server> serverOptional = Main.discordApi.getServerById(serverID);
 
             if(serverOptional.isEmpty()){
@@ -85,7 +96,7 @@ public class EmilySettingDatabase {
 
             server = serverOptional.get();
 
-            Optional<TextChannel> channelOptional = Main.discordApi.getTextChannelById(welcomeChannelID);
+            Optional<ServerTextChannel> channelOptional = server.getTextChannelById(welcomeChannelID);
 
             if(channelOptional.isEmpty()){
                 LogCreator.error("檢測狀態：歡迎頻道不存在，因此發生錯誤");
@@ -93,6 +104,15 @@ public class EmilySettingDatabase {
             }
 
             welcomeChannel = channelOptional.get();
+
+            Optional<Role> memberRoleOptional = server.getRoleById(memberRoleID);
+
+            if(memberRoleOptional.isEmpty()){
+                LogCreator.error("檢測狀態：會員身分組不存在，因此發生錯誤");
+                return;
+            }
+
+            memberRole = memberRoleOptional.get();
 
             LogCreator.info("成功讀取EmilySetting.json");
 

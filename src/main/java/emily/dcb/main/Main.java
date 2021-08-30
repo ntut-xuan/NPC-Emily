@@ -4,6 +4,7 @@ import emily.dcb.database.EmilySettingDatabase;
 import emily.dcb.database.StoryDatabase;
 import emily.dcb.database.UserDataBase;
 import emily.dcb.thread.AutoSaveTimerTask;
+import emily.dcb.thread.MemberRoleCheck;
 import emily.dcb.utils.SchoolAbbrTableCrawler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -38,7 +39,10 @@ public class Main {
         SchoolAbbrTableCrawler.load();
 
         Timer autoSaveTimer = new Timer();
+        Timer memberRoleCheckTimer = new Timer();
+
         autoSaveTimer.schedule(new AutoSaveTimerTask(), 0, 60000);
+        memberRoleCheckTimer.schedule(new MemberRoleCheck(), 0, 10000);
 
         System.out.println("All task has been executed.");
 

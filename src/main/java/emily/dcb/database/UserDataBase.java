@@ -4,17 +4,20 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import emily.dcb.event.StoryEvent;
+import emily.dcb.main.Main;
 import emily.dcb.utils.AnswerObject;
 import emily.dcb.utils.LogCreator;
 import emily.dcb.utils.ReplyPackage;
+import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.permission.RoleUpdater;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.server.ServerUpdater;
 import org.javacord.api.entity.user.User;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class UserDataBase {
 
@@ -91,6 +94,24 @@ public class UserDataBase {
 
     public static boolean containsReply(String ID){
         return UIDReply.containsKey(ID);
+    }
+
+    public static void checkUserMemberRole(){
+        Role role = EmilySettingDatabase.memberRole;
+        Server server = EmilySettingDatabase.server;
+        ServerUpdater updater = new ServerUpdater(server);
+        for(String keys : UserDataBase.UIDReply.keySet()){
+            Optional<User> userOptional = server.getMemberById(keys);
+            if(userOptional.isEmpty()){
+                continue;
+            }
+            User user = userOptional.get();
+            List<Role> roleList = user.getRoles(server);
+            if(!roleList.contains(role)){
+                updater.addRoleToUser(user, role);
+            }
+        }
+        updater.update();
     }
 
 }
