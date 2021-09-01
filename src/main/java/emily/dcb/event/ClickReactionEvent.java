@@ -80,7 +80,7 @@ public class ClickReactionEvent implements ReactionAddListener {
                 answerObject.setReplyByIndex(index, replyPackage);
                 StoryEvent.answerMap.put(user.getIdAsString(), answerObject);
 
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfYes(), null);
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfYes());
             }else if(emojiString.equals("❎")){
 
                 ReplyPackage replyPackage = new ReplyPackage(object, "No");
@@ -88,15 +88,15 @@ public class ClickReactionEvent implements ReactionAddListener {
                 answerObject.setReplyByIndex(index, replyPackage);
                 StoryEvent.answerMap.put(user.getIdAsString(), answerObject);
 
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfNo(), null);
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfNo());
             }else if(emojiString.equals("↩")){
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex(), null);
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex());
             }
         }else if(text.split("-")[1].equals("TY")){
             int index = Integer.parseInt(text.split("-")[0]);
             TYStoryObject object = (TYStoryObject) StoryDatabase.getStoryObjectByIndex(index);
             if(emojiString.equals("↩")){
-                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex(), null);
+                StoryEvent.executeStoryByIndex(message, user, textChannel, object.getReturnStoryIndex());
             }
         }
     }

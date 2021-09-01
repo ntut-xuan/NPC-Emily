@@ -109,10 +109,7 @@ public class NTXEvent implements MessageCreateListener {
                 answerObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", receipient.getDiscriminatedName()));
                 answerObject.setReplyByIndex(98, new ReplyPackage("名子", studentInfo.getLeft()));
                 answerObject.setReplyByIndex(99, new ReplyPackage("班級", studentInfo.getRight()));
-                Map<String, String> parameter = new HashMap<>();
-                parameter.put("name", studentInfo.getLeft());
-                parameter.put("class", studentInfo.getRight());
-                StoryEvent.executeStoryByIndex(null, receipient, privateChannel, ntxStoryObject.getNext(), parameter);
+                StoryEvent.executeStoryByIndex(null, receipient, privateChannel, ntxStoryObject.getNext());
             } catch (StudentIDNotFoundException e) {
                 privateChannel.sendMessage(EmbedMessageCreator.errorMessage("找不到這個學號，請確認拼字有沒有錯誤QQ"));
                 StoryEvent.userStoryLoadMap.put(receipient.getIdAsString(), ntxStoryObject.getReturnStoryIndex());

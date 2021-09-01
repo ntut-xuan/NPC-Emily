@@ -83,11 +83,11 @@ public class TextAnswerEvent implements MessageCreateListener {
                     Map<String, String> schoolAbberMap = SchoolAbbrTableCrawler.map;
                     if(!schoolAbberMap.containsKey(upperAns)){
                         //goto story 9
-                        StoryEvent.executeStoryByIndex(null, user, channel, 9, null);
+                        StoryEvent.executeStoryByIndex(null, user, channel, 9);
                     }else{
                         answerObject.setReplyByIndex(storyID, new ReplyPackage(storyObject, schoolAbberMap.get(upperAns)));
+                        StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext());
                         StoryEvent.answerMap.put(author.getIdAsString(), answerObject);
-                        StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext(), null);
                     }
                     return;
                 }
@@ -99,7 +99,7 @@ public class TextAnswerEvent implements MessageCreateListener {
                     Map<String, String> map = new HashMap<>();
                     map.put("school", answerObject.getReplyByIndex(3).getAnswer());
                     map.put("name", answerObject.getReplyByIndex(6).getAnswer());
-                    StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext(), map);
+                    StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext());
                     return;
                 }
 
@@ -111,7 +111,7 @@ public class TextAnswerEvent implements MessageCreateListener {
                 }
 
                 /* 繼續執行故事線 */
-                StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext(), null);
+                StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext());
             }
         }
     }

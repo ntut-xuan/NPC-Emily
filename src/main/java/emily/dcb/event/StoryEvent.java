@@ -63,12 +63,12 @@ public class StoryEvent implements MessageCreateListener {
                 return;
             }
 
-            executeStoryByIndex(message, optionalUser.get(), channel, 1, null);
+            executeStoryByIndex(message, optionalUser.get(), channel, 1);
         }
 
     }
 
-    public static void executeStoryByIndex(Message message, User user, TextChannel channel, int index, Map<String, String> parameter){
+    public static void executeStoryByIndex(Message message, User user, TextChannel channel, int index){
 
         if(index == 0) return;
 
@@ -82,16 +82,7 @@ public class StoryEvent implements MessageCreateListener {
         }
 
         StoryObject storyObject = StoryDatabase.getStoryObjectByIndex(index);
-        EmbedBuilder embedBuilder = storyObject.getEmbedBuilder();
-
-        if(parameter != null) {
-            String stringMessage = storyObject.getMessage();
-            for (Map.Entry<String, String> entry : parameter.entrySet()) {
-                stringMessage = stringMessage.replaceAll("\\{" + entry.getKey() + "\\}", entry.getValue());
-                stringMessage = stringMessage.replaceAll("\\|", "\n");
-            }
-            embedBuilder.setDescription(stringMessage);
-        }
+        EmbedBuilder embedBuilder = storyObject.getEmbedBuilder(user);
 
         channel.sendMessage(embedBuilder);
         userStoryLoadMap.put(user.getIdAsString(), index);

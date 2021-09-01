@@ -31,46 +31,44 @@ public class StoryDatabase {
             data += (char) r;
         }
         JsonElement jsonElement = JsonParser.parseString(data);
-        //System.out.println(System.getProperty("user.dir") + "\\" + "story.json");
         JsonObject mainObject = jsonElement.getAsJsonObject();
         JsonArray array = mainObject.get("story").getAsJsonArray();
         int arraySize = array.size();
-        //System.out.println(arraySize);
         for(int index = 0; index < arraySize; index++){
             JsonObject storyObject = array.get(index).getAsJsonObject();
+
+            int storyIndex = storyObject.get("index").getAsInt();
             String type = storyObject.get("type").getAsString();
+            String message = storyObject.get("message").getAsString();
+            int returnStoryIndex = storyObject.get("returnStoryIndex").getAsInt();
+
+            Map<String, Integer> messageTagReplaceIndex = new HashMap<>();
+
+            if(storyObject.get("tag") != null){
+                JsonObject tagObject = storyObject.get("tag").getAsJsonObject();
+                for(String key : tagObject.keySet()){
+                    messageTagReplaceIndex.put(key, tagObject.get(key).getAsInt());
+                }
+            }
+
+            StoryObject object = null;
+
             if(type.equals("YN")){
-                int storyIndex = storyObject.get("index").getAsInt();
-                String message = storyObject.get("message").getAsString();
                 String plainMessage = storyObject.get("plainMessage").getAsString();
                 int ifYes = storyObject.get("ifYes").getAsInt();
                 int ifNo = storyObject.get("ifNo").getAsInt();
-                int ifReturn = storyObject.get("returnStoryIndex").getAsInt();
-                String yesEmoji = EmojiParser.parseToUnicode("✅");
-                String noEmoji = EmojiParser.parseToUnicode("❎");
-                String returnEmoji = EmojiParser.parseToUnicode("↩");
-                YNStoryObject YNstoryObject = new YNStoryObject(storyIndex, message, plainMessage, type, yesEmoji, noEmoji, returnEmoji, ifYes, ifNo, ifReturn);
-                //System.out.println("load YN-type story object: " + storyIndex + " - " + message);
-                map.put(storyIndex, YNstoryObject);
+                object = new YNStoryObject(storyIndex, message, plainMessage, type, ifYes, ifNo, returnStoryIndex, messageTagReplaceIndex);
             }else if(type.equals("TY")){
-                int storyIndex = storyObject.get("index").getAsInt();
-                int ifReturn = storyObject.get("returnStoryIndex").getAsInt();
-                String message = storyObject.get("message").getAsString();
                 String plainMessage = storyObject.get("plainMessage").getAsString();
                 int next = storyObject.get("next").getAsInt();
                 String returnEmoji = EmojiParser.parseToUnicode("↩");
-                TYStoryObject TYStoryObject = new TYStoryObject(storyIndex, message, plainMessage, type, returnEmoji, ifReturn, next);
-                //System.out.println("load TY-type story object: " + storyIndex + " - " + message);
-                map.put(storyIndex, TYStoryObject);
+                object = new TYStoryObject(storyIndex, message, plainMessage, type, returnEmoji, returnStoryIndex, next, messageTagReplaceIndex);
             }else if(type.equals("NTX")){
-                int storyIndex = storyObject.get("index").getAsInt();
-                String message = storyObject.get("message").getAsString();
                 int next = storyObject.get("next").getAsInt();
-                int ifReturn = storyObject.get("returnStoryIndex").getAsInt();
-                NTXStoryObject ntxStoryObject = new NTXStoryObject(message, type, next, storyIndex, ifReturn);
-                //System.out.println("load NTX-type story object: " + storyIndex + " - " + message);
-                map.put(storyIndex, ntxStoryObject);
+                object = new NTXStoryObject(message, type, next, storyIndex, returnStoryIndex, messageTagReplaceIndex);
             }
+
+            map.put(storyIndex, object);
         }
         LogCreator.info("讀取到了" + map.size() + "筆故事線");
     }
