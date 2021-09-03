@@ -15,6 +15,8 @@ public class RegisterEvent {
         api.addMessageCreateListener(new AdministratorEvent());
         api.addMessageCreateListener(new DebugEvent());
         api.addMessageCreateListener(new ClubClassEvent());
+        api.addSelectMenuChooseListener(new ClubClassSelectMenuInteractionEvent());
+        api.addMessageComponentCreateListener(new ClubClassButtonInteractionEvent());
     }
 
 }

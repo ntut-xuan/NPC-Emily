@@ -27,7 +27,7 @@ public class ClubClassEvent implements MessageCreateListener {
 
         assert messageCreateEvent.getMessageAuthor().isYourself();
 
-        if(content.equals("!cc")){
+        if(content.equals("!社課")){
             SelectMenuBuilder selectMenuBuilder = new SelectMenuBuilder();
             for(ClubClass clubClass : ClubClassDatabase.clubClassList){
                 String dateFormat = clubClass.getSchedule().toString(DateTimeFormat.forPattern("yyyy/MM/dd HH:mm"));

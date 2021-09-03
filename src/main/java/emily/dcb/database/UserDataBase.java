@@ -1,15 +1,13 @@
 package emily.dcb.database;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import emily.dcb.event.StoryEvent;
-import emily.dcb.main.Main;
-import emily.dcb.utils.AnswerObject;
+import emily.dcb.utils.UserDataObject;
 import emily.dcb.utils.LogCreator;
-import emily.dcb.utils.ReplyPackage;
 import org.javacord.api.entity.permission.Role;
-import org.javacord.api.entity.permission.RoleUpdater;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.server.ServerUpdater;
 import org.javacord.api.entity.user.User;
@@ -17,12 +15,11 @@ import org.javacord.api.entity.user.User;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class UserDataBase {
 
     public static Map<String, String> StudentToUID = new HashMap<>();
-    public static Map<String, AnswerObject> UIDAnswerObject = new HashMap<>();
+    public static Map<String, UserDataObject> UIDDataObject = new HashMap<>();
 
     public static void load() throws IOException {
         File file = new File("UserData.json");
@@ -60,8 +57,8 @@ public class UserDataBase {
             }
             User user = userOptional.get();
             JsonObject subObject = object.getAsJsonObject(key);
-            AnswerObject answerObject = AnswerObject.parse(user, subObject);
-            UIDAnswerObject.put(key, answerObject);
+            UserDataObject userDataObject = UserDataObject.parse(user, subObject);
+            UIDDataObject.put(key, userDataObject);
         }
 
         /* build studentID to discordID map */
@@ -77,10 +74,10 @@ public class UserDataBase {
         File file = new File("UserData.json");
 
         JsonObject jsonObject = new JsonObject();
-        for(Map.Entry<String, AnswerObject> entry : UIDAnswerObject.entrySet()){
+        for(Map.Entry<String, UserDataObject> entry : UIDDataObject.entrySet()){
             String UID = entry.getKey();
-            AnswerObject answerObject = entry.getValue();
-            jsonObject.add(UID, answerObject.getReplyJsonObjectFormat());
+            UserDataObject userDataObject = entry.getValue();
+            jsonObject.add(UID, userDataObject.getReplyJsonObjectFormat());
         }
 
         if(!file.exists()){
@@ -101,12 +98,12 @@ public class UserDataBase {
     }
 
     public static void saveReply(String userID){
-        AnswerObject object = StoryEvent.answerMap.get(userID);
-        UIDAnswerObject.put(userID, object);
+        UserDataObject object = StoryEvent.answerMap.get(userID);
+        UIDDataObject.put(userID, object);
     }
 
     public static boolean containsReply(String ID){
-        return UIDAnswerObject.containsKey(ID);
+        return UIDDataObject.containsKey(ID);
     }
 
     public static void checkUserMemberRole(){

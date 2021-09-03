@@ -10,14 +10,13 @@ import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import org.w3c.dom.Text;
 
 import java.util.*;
 
 public class StoryEvent implements MessageCreateListener {
 
     static Map<String, Integer> userStoryLoadMap = new HashMap<>();
-    public static Map<String, AnswerObject> answerMap = new HashMap<>();
+    public static Map<String, UserDataObject> answerMap = new HashMap<>();
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {

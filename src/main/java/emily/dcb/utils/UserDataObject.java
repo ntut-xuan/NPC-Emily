@@ -1,7 +1,7 @@
 package emily.dcb.utils;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import emily.dcb.database.StoryDatabase;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 
@@ -9,31 +9,44 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class AnswerObject {
+public class UserDataObject {
 
     User user;
 
-    public AnswerObject(User user){
+    public UserDataObject(User user){
         this.user = user;
     }
 
-    Map<Integer, ReplyPackage> map = new HashMap<>();
+    Map<Integer, ReplyPackage> userAnswerMap = new HashMap<>();
+    List<ClubClass> registeredClubClass = new ArrayList<>();
+
+    public void regiseredClubClass(ClubClass clubClass){
+        registeredClubClass.add(clubClass);
+    }
+
+    public void unregisterClubClass(ClubClass clubClass){
+        registeredClubClass.remove(clubClass);
+    }
+
+    public List<ClubClass> getRegisteredClubClassList(){
+        return registeredClubClass;
+    }
 
     public ReplyPackage getReplyByIndex(int index){
-        return map.getOrDefault(index, null);
+        return userAnswerMap.getOrDefault(index, null);
     }
 
     public void setReplyByIndex(int index, ReplyPackage replyPackage){
-        map.put(index, replyPackage);
+        userAnswerMap.put(index, replyPackage);
     }
 
     public Set<Map.Entry<Integer, ReplyPackage>> getMapEntry(){
-        return map.entrySet();
+        return userAnswerMap.entrySet();
     }
 
     public List<ReplyPackage> getReplyPackageList(){
         List<ReplyPackage> list = new ArrayList<>();
-        for(Map.Entry<Integer, ReplyPackage> replyPackageEntry : map.entrySet()){
+        for(Map.Entry<Integer, ReplyPackage> replyPackageEntry : userAnswerMap.entrySet()){
             list.add(replyPackageEntry.getValue());
         }
         return list;
@@ -55,9 +68,13 @@ public class AnswerObject {
         embedBuilder.setThumbnail(user.getAvatar());
         embedBuilder.setColor(Color.CYAN);
 
-        for(Map.Entry<Integer, ReplyPackage> entry : map.entrySet()){
+        for(Map.Entry<Integer, ReplyPackage> entry : userAnswerMap.entrySet()){
             ReplyPackage replyPackage = entry.getValue();
             embedBuilder.addInlineField(replyPackage.getProblemStatement(), replyPackage.answer);
+        }
+
+        for(ClubClass clubClass : registeredClubClass){
+            embedBuilder.addField(clubClass.getClassName(), "已參加");
         }
 
         return embedBuilder;
@@ -71,17 +88,24 @@ public class AnswerObject {
             subObject.addProperty("answer", entry.getValue().getAnswer());
             jsonObject.add(entry.getValue().getProblemStatement(), subObject);
         }
+        JsonArray registeredClubClassArray = new JsonArray();
+        for(ClubClass clubClass : registeredClubClass){
+            String className = clubClass.getClassName();
+            registeredClubClassArray.add(className);
+        }
+        jsonObject.add("clubClass", registeredClubClassArray);
         return jsonObject;
     }
 
-    public static AnswerObject parse(User user, JsonObject jsonObject){
-        AnswerObject answerObject = new AnswerObject(user);
+    public static UserDataObject parse(User user, JsonObject jsonObject){
+        UserDataObject userDataObject = new UserDataObject(user);
         for(String problemStatement : jsonObject.keySet()){
+            if(problemStatement.equals("clubClass")) continue;
             JsonObject replyPackage = jsonObject.get(problemStatement).getAsJsonObject();
             int index = replyPackage.get("index").getAsInt();
             String answer = replyPackage.get("answer").getAsString();
-            answerObject.setReplyByIndex(index, new ReplyPackage(problemStatement, answer));
+            userDataObject.setReplyByIndex(index, new ReplyPackage(problemStatement, answer));
         }
-        return answerObject;
+        return userDataObject;
     }
 }

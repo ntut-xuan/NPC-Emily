@@ -1,7 +1,6 @@
 package emily.dcb.event;
 
 import emily.dcb.database.StoryDatabase;
-import emily.dcb.exception.StudentIDNotFoundException;
 import emily.dcb.utils.*;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
@@ -10,7 +9,6 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
-import java.io.IOException;
 import java.util.*;
 
 public class TextAnswerEvent implements MessageCreateListener {
@@ -73,9 +71,9 @@ public class TextAnswerEvent implements MessageCreateListener {
                 /*這個部分把答案存起來*/
                 TYStoryObject storyObject = (TYStoryObject) StoryDatabase.getStoryObjectByIndex(storyID);
 
-                AnswerObject answerObject = StoryEvent.answerMap.get(author.getIdAsString());
-                answerObject.setReplyByIndex(storyID, new ReplyPackage(storyObject, answer));
-                StoryEvent.answerMap.put(author.getIdAsString(), answerObject);
+                UserDataObject userDataObject = StoryEvent.answerMap.get(author.getIdAsString());
+                userDataObject.setReplyByIndex(storyID, new ReplyPackage(storyObject, answer));
+                StoryEvent.answerMap.put(author.getIdAsString(), userDataObject);
 
                 /* 特判StoryID=3的情況，要把學校縮寫轉成學校名稱 */
                 if (storyID == 3){
@@ -85,28 +83,28 @@ public class TextAnswerEvent implements MessageCreateListener {
                         //goto story 9
                         StoryEvent.executeStoryByIndex(null, user, channel, 9);
                     }else{
-                        answerObject.setReplyByIndex(storyID, new ReplyPackage(storyObject, schoolAbberMap.get(upperAns)));
+                        userDataObject.setReplyByIndex(storyID, new ReplyPackage(storyObject, schoolAbberMap.get(upperAns)));
                         StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext());
-                        StoryEvent.answerMap.put(author.getIdAsString(), answerObject);
+                        StoryEvent.answerMap.put(author.getIdAsString(), userDataObject);
                     }
                     return;
                 }
 
                 /* 特判StoryID=7的狀況，要把parameter丟給executeStoryByIndex做取代 */
                 if (storyID == 7) {
-                    answerObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", user.getDiscriminatedName()));
-                    StoryEvent.answerMap.put(author.getIdAsString(), answerObject);
+                    userDataObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", user.getDiscriminatedName()));
+                    StoryEvent.answerMap.put(author.getIdAsString(), userDataObject);
                     Map<String, String> map = new HashMap<>();
-                    map.put("school", answerObject.getReplyByIndex(3).getAnswer());
-                    map.put("name", answerObject.getReplyByIndex(6).getAnswer());
+                    map.put("school", userDataObject.getReplyByIndex(3).getAnswer());
+                    map.put("name", userDataObject.getReplyByIndex(6).getAnswer());
                     StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext());
                     return;
                 }
 
                 /* 特判StoryID=9的情況，要把名子輸入到StoryID=3 */
                 if(storyID == 9){
-                    answerObject.setReplyByIndex(3, new ReplyPackage(storyObject, answer));
-                    StoryEvent.answerMap.put(author.getIdAsString(), answerObject);
+                    userDataObject.setReplyByIndex(3, new ReplyPackage(storyObject, answer));
+                    StoryEvent.answerMap.put(author.getIdAsString(), userDataObject);
                     return;
                 }
 

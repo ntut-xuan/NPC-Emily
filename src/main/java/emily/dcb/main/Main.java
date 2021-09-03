@@ -37,10 +37,10 @@ public class Main {
         new RegisterEvent(discordApi);
 
         EmilySettingDatabase.load();
-        StoryDatabase.load();
-        UserDataBase.load();
-        SchoolAbbrTableCrawler.load();
         ClubClassDatabase.load();
+        StoryDatabase.load();
+        SchoolAbbrTableCrawler.load();
+        UserDataBase.load();
 
         Timer autoSaveTimer = new Timer();
         Timer memberRoleCheckTimer = new Timer();

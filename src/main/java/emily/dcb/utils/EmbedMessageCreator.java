@@ -3,6 +3,8 @@ package emily.dcb.utils;
 import emily.dcb.event.StoryEvent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.awt.*;
 import java.util.Map;
@@ -32,11 +34,11 @@ public class EmbedMessageCreator {
     public static EmbedBuilder storyMessage(int storyIndex, String type, String description, Map<String, Integer> messageTagReplaceIndex, User user){
         String formatMessage = description;
         if(messageTagReplaceIndex.size() > 0){
-            AnswerObject answerObject = StoryEvent.answerMap.get(user.getIdAsString());
+            UserDataObject userDataObject = StoryEvent.answerMap.get(user.getIdAsString());
             for(Map.Entry<String, Integer> entry : messageTagReplaceIndex.entrySet()){
                 String tag = entry.getKey();
                 int index = entry.getValue();
-                formatMessage = formatMessage.replaceAll("\\{"+tag+"\\}", answerObject.getReplyByIndex(index).getAnswer());
+                formatMessage = formatMessage.replaceAll("\\{"+tag+"\\}", userDataObject.getReplyByIndex(index).getAnswer());
             }
         }
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -44,6 +46,15 @@ public class EmbedMessageCreator {
         embedBuilder.setDescription(formatMessage.replaceAll("\\|", "\n"));
         embedBuilder.setTimestampToNow();
         embedBuilder.setFooter(String.format("%d-"+type, storyIndex));
+        return embedBuilder;
+    }
+
+    public static EmbedBuilder clubClassRegisterConfirmMessage(ClubClass clubClass){
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("社課" + clubClass.getClassName() + "的註冊確認");
+        embedBuilder.setDescription("確定要註冊這個社課 " + clubClass.getClassName() + " 嗎，請核對以下資料喔!\n\n若按鈕失效請再註冊一次社課");
+        embedBuilder.addField("時間", clubClass.getSchedule().toString(DateTimeFormat.forPattern("yyyy/MM/dd hh:mm")));
+        embedBuilder.setColor(Color.CYAN);
         return embedBuilder;
     }
 }

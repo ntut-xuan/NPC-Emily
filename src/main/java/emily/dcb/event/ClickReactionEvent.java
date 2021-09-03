@@ -76,17 +76,17 @@ public class ClickReactionEvent implements ReactionAddListener {
             if(emojiString.equals("✅")){
 
                 ReplyPackage replyPackage = new ReplyPackage(object, "Yes");
-                AnswerObject answerObject = StoryEvent.answerMap.getOrDefault(user.getIdAsString(), new AnswerObject(user));
-                answerObject.setReplyByIndex(index, replyPackage);
-                StoryEvent.answerMap.put(user.getIdAsString(), answerObject);
+                UserDataObject userDataObject = StoryEvent.answerMap.getOrDefault(user.getIdAsString(), new UserDataObject(user));
+                userDataObject.setReplyByIndex(index, replyPackage);
+                StoryEvent.answerMap.put(user.getIdAsString(), userDataObject);
 
                 StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfYes());
             }else if(emojiString.equals("❎")){
 
                 ReplyPackage replyPackage = new ReplyPackage(object, "No");
-                AnswerObject answerObject = StoryEvent.answerMap.getOrDefault(user.getIdAsString(), new AnswerObject(user));
-                answerObject.setReplyByIndex(index, replyPackage);
-                StoryEvent.answerMap.put(user.getIdAsString(), answerObject);
+                UserDataObject userDataObject = StoryEvent.answerMap.getOrDefault(user.getIdAsString(), new UserDataObject(user));
+                userDataObject.setReplyByIndex(index, replyPackage);
+                StoryEvent.answerMap.put(user.getIdAsString(), userDataObject);
 
                 StoryEvent.executeStoryByIndex(message, user, textChannel, object.getIfNo());
             }else if(emojiString.equals("↩")){

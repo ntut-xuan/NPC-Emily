@@ -1,7 +1,7 @@
 package emily.dcb.event;
 
 import emily.dcb.database.UserDataBase;
-import emily.dcb.utils.AnswerObject;
+import emily.dcb.utils.UserDataObject;
 import emily.dcb.utils.EmbedMessageCreator;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
@@ -49,13 +49,13 @@ public class AdministratorEvent implements MessageCreateListener {
                 channel.sendMessage(EmbedMessageCreator.errorMessage("無效參數: " + type));
                 return;
             }
-            if(!UserDataBase.UIDAnswerObject.containsKey(userID)){
+            if(!UserDataBase.UIDDataObject.containsKey(userID)){
                 channel.sendMessage(EmbedMessageCreator.errorMessage("找不到這個discordID" + userID + "的資料，可能是這個discordID還沒註冊或discordID的主人已經退出伺服器了"));
                 return;
             }
             System.out.println(userID);
-            AnswerObject answerObject = UserDataBase.UIDAnswerObject.get(userID);
-            channel.sendMessage(answerObject.getEmbed());
+            UserDataObject userDataObject = UserDataBase.UIDDataObject.get(userID);
+            channel.sendMessage(userDataObject.getEmbed());
         }
 
     }

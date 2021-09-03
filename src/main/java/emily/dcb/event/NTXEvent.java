@@ -7,7 +7,6 @@ import emily.dcb.exception.StudentIDNotFoundException;
 import emily.dcb.utils.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.javacord.api.entity.channel.PrivateChannel;
-import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.Embed;
@@ -16,13 +15,10 @@ import org.javacord.api.entity.message.embed.EmbedFooter;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import org.javacord.api.util.NonThrowingAutoCloseable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public class NTXEvent implements MessageCreateListener {
@@ -101,14 +97,14 @@ public class NTXEvent implements MessageCreateListener {
             NTXStoryObject ntxStoryObject = (NTXStoryObject) StoryDatabase.getStoryObjectByIndex(4);
             try {
                 message.getChannel().type();
-                AnswerObject answerObject = StoryEvent.answerMap.get(String.valueOf(ID));
-                String studentID = answerObject.getReplyByIndex(2).getAnswer();
+                UserDataObject userDataObject = StoryEvent.answerMap.get(String.valueOf(ID));
+                String studentID = userDataObject.getReplyByIndex(2).getAnswer();
                 StudentInfoCrawler sic = new StudentInfoCrawler();
                 Pair<String, String> studentInfo = sic.getStudentNameAndClass(studentID);
-                answerObject.setReplyByIndex(3, new ReplyPackage("學校", SchoolAbbrTableCrawler.map.get("NTUT")));
-                answerObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", receipient.getDiscriminatedName()));
-                answerObject.setReplyByIndex(98, new ReplyPackage("名子", studentInfo.getLeft()));
-                answerObject.setReplyByIndex(99, new ReplyPackage("班級", studentInfo.getRight()));
+                userDataObject.setReplyByIndex(3, new ReplyPackage("學校", SchoolAbbrTableCrawler.map.get("NTUT")));
+                userDataObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", receipient.getDiscriminatedName()));
+                userDataObject.setReplyByIndex(98, new ReplyPackage("名子", studentInfo.getLeft()));
+                userDataObject.setReplyByIndex(99, new ReplyPackage("班級", studentInfo.getRight()));
                 StoryEvent.executeStoryByIndex(null, receipient, privateChannel, ntxStoryObject.getNext());
             } catch (StudentIDNotFoundException e) {
                 privateChannel.sendMessage(EmbedMessageCreator.errorMessage("找不到這個學號，請確認拼字有沒有錯誤QQ"));
@@ -124,11 +120,11 @@ public class NTXEvent implements MessageCreateListener {
                 UserDataBase.saveReply(String.valueOf(ID));
 
                 /* send welcome photo and message */
-                AnswerObject answerObject = StoryEvent.answerMap.get(String.valueOf(ID));
+                UserDataObject userDataObject = StoryEvent.answerMap.get(String.valueOf(ID));
                 String school = "國立臺北科技大學";
-                String discordTag = answerObject.getReplyByIndex(97).getAnswer();
-                String name = answerObject.getReplyByIndex(98).getAnswer();
-                String studentClass = answerObject.getReplyByIndex(99).getAnswer();
+                String discordTag = userDataObject.getReplyByIndex(97).getAnswer();
+                String name = userDataObject.getReplyByIndex(98).getAnswer();
+                String studentClass = userDataObject.getReplyByIndex(99).getAnswer();
                 BufferedImage bufferedImage = PhotoSynthesis.photoSynthesis(discordTag, "國立臺北科技大學", studentClass, name);
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setColor(Color.magenta);
@@ -146,10 +142,10 @@ public class NTXEvent implements MessageCreateListener {
                 UserDataBase.saveReply(String.valueOf(ID));
 
                 /* send welcome photo and message */
-                AnswerObject answerObject = StoryEvent.answerMap.get(String.valueOf(ID));
-                String discordTag = answerObject.getReplyByIndex(97).getAnswer();
-                String name = answerObject.getReplyByIndex(6).getAnswer();
-                String school = answerObject.getReplyByIndex(3).getAnswer();
+                UserDataObject userDataObject = StoryEvent.answerMap.get(String.valueOf(ID));
+                String discordTag = userDataObject.getReplyByIndex(97).getAnswer();
+                String name = userDataObject.getReplyByIndex(6).getAnswer();
+                String school = userDataObject.getReplyByIndex(3).getAnswer();
                 BufferedImage bufferedImage = PhotoSynthesis.photoSynthesis(discordTag, school, "", name);
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setColor(Color.magenta);
