@@ -1,5 +1,6 @@
 package emily.dcb.main;
 
+import emily.dcb.database.ClubClassDatabase;
 import emily.dcb.database.EmilySettingDatabase;
 import emily.dcb.database.StoryDatabase;
 import emily.dcb.database.UserDataBase;
@@ -39,6 +40,7 @@ public class Main {
         StoryDatabase.load();
         UserDataBase.load();
         SchoolAbbrTableCrawler.load();
+        ClubClassDatabase.load();
 
         Timer autoSaveTimer = new Timer();
         Timer memberRoleCheckTimer = new Timer();

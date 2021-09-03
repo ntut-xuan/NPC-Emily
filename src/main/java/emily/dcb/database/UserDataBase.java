@@ -65,12 +65,12 @@ public class UserDataBase {
         }
 
         /* build studentID to discordID map */
-        for(String key : keys){
+        /*for(String key : keys){
             JsonObject subObject = object.get(key).getAsJsonObject();
             JsonObject studentUIDJsonObject = subObject.get("學號").getAsJsonObject();
             String studentUID = studentUIDJsonObject.get("answer").getAsString();
             StudentToUID.put(studentUID, key);
-        }
+        }*/
     }
 
     public static void save() throws IOException {

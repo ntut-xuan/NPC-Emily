@@ -13,6 +13,8 @@ public class RegisterEvent {
         api.addMessageCreateListener(new NTXEvent());
         api.addMessageCreateListener(new SpyChatEvent());
         api.addMessageCreateListener(new AdministratorEvent());
+        api.addMessageCreateListener(new DebugEvent());
+        api.addMessageCreateListener(new ClubClassEvent());
     }
 
 }
