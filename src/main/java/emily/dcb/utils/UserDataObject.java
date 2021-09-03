@@ -2,6 +2,7 @@ package emily.dcb.utils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import emily.dcb.database.ClubClassDatabase;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 
@@ -18,7 +19,7 @@ public class UserDataObject {
     }
 
     Map<Integer, ReplyPackage> userAnswerMap = new HashMap<>();
-    List<ClubClass> registeredClubClass = new ArrayList<>();
+    Set<ClubClass> registeredClubClass = new HashSet<>();
 
     public void regiseredClubClass(ClubClass clubClass){
         registeredClubClass.add(clubClass);
@@ -26,10 +27,6 @@ public class UserDataObject {
 
     public void unregisterClubClass(ClubClass clubClass){
         registeredClubClass.remove(clubClass);
-    }
-
-    public List<ClubClass> getRegisteredClubClassList(){
-        return registeredClubClass;
     }
 
     public ReplyPackage getReplyByIndex(int index){
@@ -73,6 +70,8 @@ public class UserDataObject {
             embedBuilder.addInlineField(replyPackage.getProblemStatement(), replyPackage.answer);
         }
 
+        embedBuilder.addField("---------社課---------", "-----------------------");
+
         for(ClubClass clubClass : registeredClubClass){
             embedBuilder.addField(clubClass.getClassName(), "已參加");
         }
@@ -82,12 +81,14 @@ public class UserDataObject {
 
     public JsonObject getReplyJsonObjectFormat(){
         JsonObject jsonObject = new JsonObject();
+        JsonObject userInfo = new JsonObject();
         for(Map.Entry<Integer, ReplyPackage> entry : getMapEntry()){
             JsonObject subObject = new JsonObject();
             subObject.addProperty("index", entry.getKey());
             subObject.addProperty("answer", entry.getValue().getAnswer());
-            jsonObject.add(entry.getValue().getProblemStatement(), subObject);
+            userInfo.add(entry.getValue().getProblemStatement(), subObject);
         }
+        jsonObject.add("userInfo", userInfo);
         JsonArray registeredClubClassArray = new JsonArray();
         for(ClubClass clubClass : registeredClubClass){
             String className = clubClass.getClassName();
@@ -99,12 +100,21 @@ public class UserDataObject {
 
     public static UserDataObject parse(User user, JsonObject jsonObject){
         UserDataObject userDataObject = new UserDataObject(user);
-        for(String problemStatement : jsonObject.keySet()){
-            if(problemStatement.equals("clubClass")) continue;
-            JsonObject replyPackage = jsonObject.get(problemStatement).getAsJsonObject();
+        JsonObject userInfoJsonObject = jsonObject.getAsJsonObject("userInfo");
+        JsonArray clubClassJsonObject = jsonObject.getAsJsonArray("clubClass");
+        for(String problemStatement : userInfoJsonObject.keySet()){
+            JsonObject replyPackage = userInfoJsonObject.get(problemStatement).getAsJsonObject();
             int index = replyPackage.get("index").getAsInt();
             String answer = replyPackage.get("answer").getAsString();
             userDataObject.setReplyByIndex(index, new ReplyPackage(problemStatement, answer));
+        }
+        for(int index = 0; index < clubClassJsonObject.size(); index++){
+            String clubClassName = clubClassJsonObject.get(index).getAsString();
+            for(ClubClass clubClass : ClubClassDatabase.clubClassList){
+                if(clubClass.getClassName().equals(clubClassName)){
+                    userDataObject.regiseredClubClass(clubClass);
+                }
+            }
         }
         return userDataObject;
     }
