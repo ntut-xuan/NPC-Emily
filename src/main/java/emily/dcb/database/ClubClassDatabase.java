@@ -23,6 +23,8 @@ public class ClubClassDatabase {
             file.createNewFile();
             PrintWriter printWriter = new PrintWriter(file);
             printWriter.println("{}");
+            printWriter.close();
+            return;
         }
         InputStreamReader fileInputStream = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
         String jsonString = "";
