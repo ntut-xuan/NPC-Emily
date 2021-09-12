@@ -47,13 +47,14 @@ public class ClubClassButtonInteractionEvent implements MessageComponentCreateLi
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 String dateFormat = sdf.format(dateTime.toDate());
                 ValueRange valueRange = new ValueRange();
+                valueRange.setMajorDimension("ROWS");
                 String isNTUTStudent = userDataObject.getReplyByIndex(1).getAnswer();
                 String studentName = userDataObject.getReplyByIndex(6).getAnswer();
                 String discordID = userDataObject.getReplyByIndex(97).getAnswer();
                 String studentIDorSchool = userDataObject.getReplyByIndex(isNTUTStudent.equals("No") ? 3 : 2).getAnswer();
                 valueRange.setValues(List.of(Arrays.asList(dateFormat, studentName, isNTUTStudent, discordID, studentIDorSchool, "", "v")));
-                AppendValuesResponse appendResult = GoogleSheetsLoader.sheets.spreadsheets().values()
-                        .append(GoogleSheetsLoader.spreadSheetID, "great", valueRange)
+                GoogleSheetsLoader.sheets.spreadsheets().values()
+                        .append(clubClass.getSpreadSheetID(), "spreadsheet1", valueRange)
                         .setValueInputOption("USER_ENTERED")
                         .setInsertDataOption("INSERT_ROWS")
                         .setIncludeValuesInResponse(true)

@@ -3,7 +3,9 @@ package emily.dcb.database;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import emily.dcb.main.GoogleSheetsLoader;
 import emily.dcb.utils.ClubClass;
+import emily.dcb.utils.LogCreator;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -40,12 +42,19 @@ public class ClubClassDatabase {
             String className = subObject.get("className").getAsString();
             String classDescription = subObject.get("description").getAsString();
             String classScheduleString = subObject.get("schedule").getAsString();
+            String spreadsheetID = subObject.get("spreadsheetID").getAsString();
             int maxRegisterSize = subObject.get("maxRegisterSize").getAsInt();
 
             /* Convert scheduleString into DateTime */
             DateTime dateTime = DateTime.parse(classScheduleString, DateTimeFormat.forPattern("yyyy/MM/dd HH:mm"));
 
-            ClubClass clubClass = new ClubClass(className, classDescription, dateTime, maxRegisterSize);
+            /* Check spreadSheet is valid */
+            if(!GoogleSheetsLoader.checkSpreadSheetValid(spreadsheetID)){
+                LogCreator.error("課程" + className + "的表單不存在，請確認試算表ID是否輸入錯誤");
+                continue;
+            }
+
+            ClubClass clubClass = new ClubClass(className, classDescription, spreadsheetID, dateTime, maxRegisterSize);
             clubClassList.add(clubClass);
         }
     }

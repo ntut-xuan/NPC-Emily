@@ -25,7 +25,6 @@ import java.util.List;
 public class GoogleSheetsLoader {
 
     public static Sheets sheets;
-    public static final String spreadSheetID = "1GYANld-aF7rRqKhCef2F1Yz3jkKt83ff1lEPeoJNeuw";
     private static final String APPLICATION_NAME = "Google Sheets API Java Quickstart";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
@@ -73,5 +72,14 @@ public class GoogleSheetsLoader {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         GoogleSheetsLoader.sheets = service;
+    }
+
+    public static boolean checkSpreadSheetValid(String spreadSheetID){
+        try {
+            ValueRange valueRange = sheets.spreadsheets().values().get(spreadSheetID, "A:A").execute();
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 }

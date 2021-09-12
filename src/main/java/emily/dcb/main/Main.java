@@ -34,11 +34,11 @@ public class Main {
         new RegisterEvent(discordApi);
 
         EmilySettingDatabase.load();
+        GoogleSheetsLoader.load();
         ClubClassDatabase.load();
         StoryDatabase.load();
         SchoolAbbrTableCrawler.load();
         UserDataBase.load();
-        GoogleSheetsLoader.load();
 
         Timer autoSaveTimer = new Timer();
         Timer memberRoleCheckTimer = new Timer();

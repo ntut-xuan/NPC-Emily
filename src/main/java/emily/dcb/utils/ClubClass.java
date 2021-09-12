@@ -6,13 +6,15 @@ public class ClubClass {
 
     String className;
     String classDescription;
+    String spreadSheetID;
     DateTime schedule;
     int maximumRegisterCount;
 
-    public ClubClass(String className, String classDescription, DateTime dateTime, int maximumRegisterCount) {
+    public ClubClass(String className, String classDescription, String spreadSheetID, DateTime dateTime, int maximumRegisterCount) {
         this.className = className;
         this.classDescription = classDescription;
         this.schedule = dateTime;
+        this.spreadSheetID = spreadSheetID;
         this.maximumRegisterCount = maximumRegisterCount;
     }
 
@@ -22,6 +24,10 @@ public class ClubClass {
 
     public String getClassDescription() {
         return classDescription;
+    }
+
+    public String getSpreadSheetID(){
+        return spreadSheetID;
     }
 
     public DateTime getSchedule() {
