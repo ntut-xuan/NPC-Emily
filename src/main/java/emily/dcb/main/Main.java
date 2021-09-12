@@ -9,19 +9,16 @@ import emily.dcb.thread.MemberRoleCheck;
 import emily.dcb.utils.SchoolAbbrTableCrawler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.interaction.SlashCommand;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
+import java.security.GeneralSecurityException;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class Main {
 
     public static DiscordApi discordApi;
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+    public static void main(String[] args) throws IOException, GeneralSecurityException {
 
         //Token need to type in first arguments.
         String token = args[0];
@@ -41,6 +38,7 @@ public class Main {
         StoryDatabase.load();
         SchoolAbbrTableCrawler.load();
         UserDataBase.load();
+        GoogleSheetsLoader.load();
 
         Timer autoSaveTimer = new Timer();
         Timer memberRoleCheckTimer = new Timer();

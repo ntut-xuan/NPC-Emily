@@ -103,7 +103,7 @@ public class NTXEvent implements MessageCreateListener {
                 Pair<String, String> studentInfo = sic.getStudentNameAndClass(studentID);
                 userDataObject.setReplyByIndex(3, new ReplyPackage("學校", SchoolAbbrTableCrawler.map.get("NTUT")));
                 userDataObject.setReplyByIndex(97, new ReplyPackage("DiscordTag", receipient.getDiscriminatedName()));
-                userDataObject.setReplyByIndex(98, new ReplyPackage("名子", studentInfo.getLeft()));
+                userDataObject.setReplyByIndex(6, new ReplyPackage("名子", studentInfo.getLeft()));
                 userDataObject.setReplyByIndex(99, new ReplyPackage("班級", studentInfo.getRight()));
                 StoryEvent.executeStoryByIndex(null, receipient, privateChannel, ntxStoryObject.getNext());
             } catch (StudentIDNotFoundException e) {
@@ -123,7 +123,7 @@ public class NTXEvent implements MessageCreateListener {
                 UserDataObject userDataObject = StoryEvent.answerMap.get(String.valueOf(ID));
                 String school = "國立臺北科技大學";
                 String discordTag = userDataObject.getReplyByIndex(97).getAnswer();
-                String name = userDataObject.getReplyByIndex(98).getAnswer();
+                String name = userDataObject.getReplyByIndex(6).getAnswer();
                 String studentClass = userDataObject.getReplyByIndex(99).getAnswer();
                 BufferedImage bufferedImage = PhotoSynthesis.photoSynthesis(discordTag, "國立臺北科技大學", studentClass, name);
                 EmbedBuilder embedBuilder = new EmbedBuilder();
