@@ -33,7 +33,7 @@ public class AdministratorEvent implements MessageCreateListener {
         Server server = serverOptional.get();
         TextChannel channel = messageCreateEvent.getChannel();
 
-        if(author.isBotOwner() && contentSplit[0].equals("!catch")){
+        if(author.isServerAdmin() && contentSplit[0].equals("!catch")){
             String type = contentSplit[1];
             String userID;
             if(type.equals("-ui")){

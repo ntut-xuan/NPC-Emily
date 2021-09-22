@@ -59,15 +59,12 @@ public class UserDataBase {
             JsonObject subObject = object.getAsJsonObject(key);
             UserDataObject userDataObject = UserDataObject.parse(user, subObject);
             UIDDataObject.put(key, userDataObject);
+            JsonObject userInfoObject = subObject.get("userInfo").getAsJsonObject();
+            if(userInfoObject.has("學號")){
+                String studentID = userInfoObject.get("學號").getAsJsonObject().get("answer").getAsString();
+                StudentToUID.put(studentID, user.getIdAsString());
+            }
         }
-
-        /* build studentID to discordID map */
-        /*for(String key : keys){
-            JsonObject subObject = object.get(key).getAsJsonObject();
-            JsonObject studentUIDJsonObject = subObject.get("學號").getAsJsonObject();
-            String studentUID = studentUIDJsonObject.get("answer").getAsString();
-            StudentToUID.put(studentUID, key);
-        }*/
     }
 
     public static void save() throws IOException {
