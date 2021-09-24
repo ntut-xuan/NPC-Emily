@@ -107,7 +107,7 @@ public class UserDataBase {
         Role role = EmilySettingDatabase.memberRole;
         Server server = EmilySettingDatabase.server;
         ServerUpdater updater = new ServerUpdater(server);
-        for(String keys : UserDataBase.StudentToUID.keySet()){
+        for(String keys : UserDataBase.UIDDataObject.keySet()){
             Optional<User> userOptional = server.getMemberById(keys);
             if(userOptional.isEmpty()){
                 continue;
