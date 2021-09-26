@@ -105,6 +105,7 @@ public class TextAnswerEvent implements MessageCreateListener {
                 if(storyID == 9){
                     userDataObject.setReplyByIndex(3, new ReplyPackage(storyObject, answer));
                     StoryEvent.answerMap.put(author.getIdAsString(), userDataObject);
+                    StoryEvent.executeStoryByIndex(null, user, channel, storyObject.getNext());
                     return;
                 }
 
