@@ -1,15 +1,19 @@
 package emily.dcb.event;
 
+import emily.dcb.database.ClubClassDatabase;
 import emily.dcb.database.UserDataBase;
-import emily.dcb.utils.UserDataObject;
-import emily.dcb.utils.EmbedMessageCreator;
+import emily.dcb.utils.*;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.MessageAuthor;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 public class AdministratorEvent implements MessageCreateListener {
@@ -33,7 +37,11 @@ public class AdministratorEvent implements MessageCreateListener {
         Server server = serverOptional.get();
         TextChannel channel = messageCreateEvent.getChannel();
 
-        if(author.isServerAdmin() && contentSplit[0].equals("!catch")){
+        if(!author.isServerAdmin()){
+            return;
+        }
+
+        if(contentSplit[0].equals("!catch")){
             String type = contentSplit[1];
             String userID;
             if(type.equals("-ui")){
@@ -56,6 +64,26 @@ public class AdministratorEvent implements MessageCreateListener {
             System.out.println(userID);
             UserDataObject userDataObject = UserDataBase.UIDDataObject.get(userID);
             channel.sendMessage(userDataObject.getEmbed());
+        }else if(contentSplit[0].equals("!showjoin")){
+            try {
+                String userID = contentSplit[1];
+                if(!UserDataBase.UIDDataObject.containsKey(userID)){
+                    channel.sendMessage(EmbedMessageCreator.errorMessage("找不到這個ID"));
+                    return;
+                }
+                UserDataObject userDataObject = UserDataBase.UIDDataObject.get(userID);
+                String discordID = userDataObject.getReplyByIndex(97).getAnswer();
+                String school = userDataObject.getReplyByIndex(3).getAnswer();
+                String studentClass = userDataObject.getReplyByIndex(99).getAnswer();
+                String studentName = userDataObject.getReplyByIndex(6).getAnswer();
+                BufferedImage bufferedImage = PhotoSynthesis.photoSynthesis(discordID, school, studentClass, studentName);
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setImage(bufferedImage);
+                LogCreator.info(discordID);
+                channel.sendMessage(embedBuilder);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
 
     }

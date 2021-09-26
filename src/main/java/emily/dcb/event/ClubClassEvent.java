@@ -1,21 +1,27 @@
 package emily.dcb.event;
 
 import emily.dcb.database.ClubClassDatabase;
+import emily.dcb.database.EmilySettingDatabase;
 import emily.dcb.utils.ClubClass;
 import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.SelectMenuBuilder;
 import org.javacord.api.entity.message.component.SelectMenuOptionBuilder;
+import org.javacord.api.entity.permission.Role;
+import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import javax.swing.text.html.Option;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class ClubClassEvent implements MessageCreateListener {
 
@@ -24,10 +30,22 @@ public class ClubClassEvent implements MessageCreateListener {
 
         TextChannel textChannel = messageCreateEvent.getChannel();
         String content = messageCreateEvent.getMessageContent();
+        MessageAuthor author = messageCreateEvent.getMessageAuthor();
 
-        assert messageCreateEvent.getMessageAuthor().isYourself();
+        if(author.isYourself()){
+            return;
+        }
 
-        if(content.equals("!社課")){
+        Optional<User> userOptional = messageCreateEvent.getMessageAuthor().asUser();
+
+        if(userOptional.isEmpty()){
+            return;
+        }
+
+        User user = userOptional.get();
+        List<Role> roleList = user.getRoles(EmilySettingDatabase.server);
+
+        if(content.equals("!社課") && (author.isServerAdmin() || roleList.contains(EmilySettingDatabase.clubMemberRole))){
             SelectMenuBuilder selectMenuBuilder = new SelectMenuBuilder();
             for(ClubClass clubClass : ClubClassDatabase.clubClassList){
                 String dateFormat = clubClass.getSchedule().toString(DateTimeFormat.forPattern("yyyy/MM/dd HH:mm"));

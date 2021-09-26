@@ -25,6 +25,7 @@ public class EmilySettingDatabase {
     public static Server server;
     public static TextChannel welcomeChannel;
     public static Role memberRole;
+    public static Role clubMemberRole;
 
     public static void load() {
 
@@ -96,6 +97,14 @@ public class EmilySettingDatabase {
 
             server = serverOptional.get();
 
+            if (object.get("clubMemberRoleID").getAsString().equals("")){
+                LogCreator.error("檢測狀態：clubMemberRoleID尚未設置，請設置才能得到完整功能");
+                return;
+            }
+
+            String clubMemberRoleID = object.get("clubMemberRoleID").getAsString();
+
+
             Optional<ServerTextChannel> channelOptional = server.getTextChannelById(welcomeChannelID);
 
             if(channelOptional.isEmpty()){
@@ -113,6 +122,15 @@ public class EmilySettingDatabase {
             }
 
             memberRole = memberRoleOptional.get();
+
+            Optional<Role> clubMemberRoleOptional = server.getRoleById(clubMemberRoleID);
+
+            if(clubMemberRoleOptional.isEmpty()){
+                LogCreator.error("檢測狀態：社員身分組不存在，因此發生錯誤");
+                return;
+            }
+
+            clubMemberRole = clubMemberRoleOptional.get();
 
             LogCreator.info("成功讀取EmilySetting.json");
 
