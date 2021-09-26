@@ -129,7 +129,7 @@ public class NTXEvent implements MessageCreateListener {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setColor(Color.magenta);
                 embedBuilder.setImage(bufferedImage);
-                EmilySettingDatabase.welcomeChannel.sendMessage("歡迎 " + receipient.getMentionTag() + "成為北科程式設計社的會員!");
+                EmilySettingDatabase.welcomeChannel.sendMessage("歡迎 " + receipient.getMentionTag() + "成為北科程式設計社的社員!");
                 EmilySettingDatabase.welcomeChannel.sendMessage(embedBuilder);
             }catch (IOException e){
                 e.printStackTrace();
@@ -150,7 +150,7 @@ public class NTXEvent implements MessageCreateListener {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setColor(Color.magenta);
                 embedBuilder.setImage(bufferedImage);
-                EmilySettingDatabase.welcomeChannel.sendMessage("歡迎 " + receipient.getMentionTag() + " 成為北科程式設計社的會員!");
+                EmilySettingDatabase.welcomeChannel.sendMessage("歡迎 " + receipient.getMentionTag() + " 成為北科程式設計社的社員!");
                 EmilySettingDatabase.welcomeChannel.sendMessage(embedBuilder);
             }catch (IOException e){
                 e.printStackTrace();
