@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
@@ -42,11 +43,11 @@ public class LogCreator {
             DateTime dateTime = DateTime.now();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String date = simpleDateFormat.format(dateTime.toDate());
-            File dir = new File(System.getProperty("user.dir") + "\\log");
+            File dir = new File(System.getProperty("user.dir") + File.separator + "log");
             if(!dir.exists()){
                 dir.mkdir();
             }
-            File log = new File(System.getProperty("user.dir") + "\\log\\" + date + ".txt");
+            File log = new File(System.getProperty("user.dir") + File.separator + "log" + File.separator + date + ".txt");
             if(!log.exists()){
                 log.createNewFile();
             }
