@@ -8,24 +8,28 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StudentInfoCrawler {
     public Pair<String, String> getStudentNameAndClass(String studentID) throws IOException, StudentIDNotFoundException {
 
+        File file = new File("NTUT-StudentInfo.txt");
+        Scanner cin = new Scanner(file);
+
+        String ID = cin.nextLine();
+        String password = cin.nextLine();
+
         String urlString = "https://app.ntut.edu.tw/login.do";
         Map<String, String> datas = new HashMap<>();
-        datas.put("muid", "109590031");
-        datas.put("mpassword", "Han910625");
+        datas.put("muid", ID);
+        datas.put("mpassword", password);
         datas.put("forceMobile", "app");
         datas.put("md5Code", "1111");
         datas.put("ssoId", "");
