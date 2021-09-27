@@ -53,7 +53,7 @@ public class StoryEvent implements MessageCreateListener {
                 return;
             }
 
-            if(UserDataBase.containsReply(author.getIdAsString())){
+            if(!author.isBotOwner() && UserDataBase.containsReply(author.getIdAsString())){
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setTitle("你已經註冊過囉~");
                 embedBuilder.setDescription("如果註冊上有資料需要更改，請聯繫社團幹部");
@@ -62,6 +62,8 @@ public class StoryEvent implements MessageCreateListener {
                 return;
             }
 
+            User user = optionalUser.get();
+            userStoryLoadMap.remove(user.getIdAsString());
             executeStoryByIndex(message, optionalUser.get(), channel, 1);
         }
 
