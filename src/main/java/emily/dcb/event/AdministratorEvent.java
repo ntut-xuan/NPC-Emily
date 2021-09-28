@@ -71,7 +71,6 @@ public class AdministratorEvent implements MessageCreateListener {
                 channel.sendMessage(EmbedMessageCreator.errorMessage("找不到這個discordID" + userID + "的資料，可能是這個discordID還沒註冊或discordID的主人已經退出伺服器了"));
                 return;
             }
-            System.out.println(userID);
             UserDataObject userDataObject = UserDataBase.UIDDataObject.get(userID);
             channel.sendMessage(userDataObject.getEmbed());
         }else if(contentSplit[0].equals("!showjoin")){

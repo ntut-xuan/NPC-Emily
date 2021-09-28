@@ -67,7 +67,12 @@ public class UserDataObject {
 
         for(Map.Entry<Integer, ReplyPackage> entry : userAnswerMap.entrySet()){
             ReplyPackage replyPackage = entry.getValue();
-            embedBuilder.addInlineField(replyPackage.getProblemStatement(), replyPackage.answer);
+            String problem = replyPackage.getProblemStatement();
+            String answer = replyPackage.getAnswer();
+            if(answer.equals("")){
+                answer = "無";
+            }
+            embedBuilder.addInlineField(problem, answer);
         }
 
         embedBuilder.addField("---------社課---------", "-----------------------");
