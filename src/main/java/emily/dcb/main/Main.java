@@ -20,20 +20,19 @@ public class Main {
 
     public static void main(String[] args) throws IOException, GeneralSecurityException {
 
-        //Token need to type in first arguments.
-        String token = args[0];
+        EmilySettingDatabase.load(true);
 
-        System.out.println("Running bot with this token: " + token);
+        System.out.println("Running bot with this token: " + EmilySettingDatabase.token);
 
         //Create a DiscordApiBuilder object to create DiscordApi.
         DiscordApiBuilder builder = new DiscordApiBuilder();
 
         //So here we will get the api object and do something.
-        discordApi = builder.setToken(token).setAllIntents().login().join();
+        discordApi = builder.setToken(EmilySettingDatabase.token).setAllIntents().login().join();
 
         new RegisterEvent(discordApi);
 
-        EmilySettingDatabase.load();
+        EmilySettingDatabase.load(false);
         GoogleSheetsLoader.load();
         ClubClassDatabase.load();
         StoryDatabase.load();

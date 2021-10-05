@@ -22,12 +22,13 @@ import java.util.Set;
 
 public class EmilySettingDatabase {
 
+    public static String token;
     public static Server server;
     public static TextChannel welcomeChannel;
     public static Role memberRole;
     public static Role clubMemberRole;
 
-    public static void load() {
+    public static void load(boolean tokenOnly) {
 
         try {
 
@@ -40,6 +41,7 @@ public class EmilySettingDatabase {
                 LogCreator.info("由於EmilySetting.json不存在，所以創立一個");
 
                 JsonObject object = new JsonObject();
+                object.addProperty("token", "");
                 object.addProperty("serverID", "");
                 object.addProperty("welcomeChannelID", "");
                 object.addProperty("memberRoleID", "");
@@ -66,6 +68,11 @@ public class EmilySettingDatabase {
             /* Parse text into Json object */
             JsonElement element = JsonParser.parseString(jsonFile);
             JsonObject object = element.getAsJsonObject();
+
+            if(tokenOnly){
+                token = object.get("token").getAsString();
+                return;
+            }
 
             if (object.get("serverID").getAsString().equals("")) {
                 LogCreator.error("檢測狀態：serverID尚未設置，請設置才能得到完整功能");

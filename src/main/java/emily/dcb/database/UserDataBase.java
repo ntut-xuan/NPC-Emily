@@ -22,6 +22,7 @@ public class UserDataBase {
     public static Map<String, UserDataObject> UIDDataObject = new HashMap<>();
 
     public static void load() throws IOException {
+
         File file = new File("UserData.json");
 
         /* check file exist */
