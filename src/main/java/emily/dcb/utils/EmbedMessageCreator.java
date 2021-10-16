@@ -1,12 +1,17 @@
 package emily.dcb.utils;
 
+import com.ibm.icu.text.Transliterator;
 import emily.dcb.event.StoryEvent;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class EmbedMessageCreator {
@@ -55,6 +60,47 @@ public class EmbedMessageCreator {
         embedBuilder.setDescription("確定要註冊這個社課 " + clubClass.getClassName() + " 嗎，請核對以下資料喔!\n\n若按鈕失效請再註冊一次社課");
         embedBuilder.addField("時間", clubClass.getSchedule().toString(DateTimeFormat.forPattern("yyyy/MM/dd hh:mm")));
         embedBuilder.setColor(Color.CYAN);
+        return embedBuilder;
+    }
+
+    public static EmbedBuilder calendarFormatEmbed(Map<Integer, Integer> plannedCount){
+        DateTime dateTime = DateTime.now();
+        int year = dateTime.getYear();
+        int month = dateTime.getMonthOfYear();
+        java.util.List<java.util.List<String>> array = new ArrayList<>();
+        for(int i = 0; i < 8; i++){
+            List<String> temp = new ArrayList<>();
+            for(int j = 0; j < 7; j++){
+                temp.add("－－");
+            }
+            array.add(temp);
+        }
+        dateTime.withZone(DateTimeZone.forID("Asia/Taipei"));
+        dateTime = dateTime.withDate(year, month, 1);
+        dateTime = dateTime.withTime(0,0,0, 0);
+        int startWeek = 1;
+        int startDay = dateTime.getDayOfWeek();
+        int day = 1;
+        while(month == dateTime.getMonthOfYear()){
+            day = dateTime.getDayOfMonth();
+            startDay = dateTime.getDayOfWeek();
+            if(startDay == 7) startWeek += 1;
+            Transliterator tl = Transliterator.getInstance("Halfwidth-Fullwidth");
+            int value = plannedCount.getOrDefault(day, 0);
+            String data = tl.transliterate(String.valueOf(String.format("%2d", day)));
+            if(value > 0) {
+                data = "__***" + data + "***__";
+            }
+            array.get(startWeek).set(startDay % 7, data);
+            dateTime = dateTime.plusDays(1);
+        }
+        String data = "";
+        for(int i = 1; i < array.size()-1; i++){
+            List<String> list = array.get(i);
+            data += "｜" + String.join("｜", list) + "｜" + "\n";
+        }
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setDescription(data);
         return embedBuilder;
     }
 }
