@@ -9,6 +9,7 @@ public class RegisterEvent {
         api.addMessageCreateListener(new StoryEvent());
         api.addMessageCreateListener(new AddReactionEvent());
         api.addReactionAddListener(new ClickReactionEvent());
+        api.addReactionAddListener(new EmbedRemoveEvent());
         api.addMessageCreateListener(new TextAnswerEvent());
         api.addMessageCreateListener(new NTXEvent());
         api.addMessageCreateListener(new SpyChatEvent());

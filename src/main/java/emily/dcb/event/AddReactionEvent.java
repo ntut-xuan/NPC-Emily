@@ -43,16 +43,20 @@ public class AddReactionEvent implements MessageCreateListener {
         }
 
         String text = footerText.get();
-        if(text.split("-")[1].equals("YN")){
-            int index = Integer.parseInt(text.split("-")[0]);
-            YNStoryObject ynStoryObject = (YNStoryObject) StoryDatabase.getStoryObjectByIndex(index);
-            message.addReactions(ynStoryObject.getYesEmoji());
-            message.addReactions(ynStoryObject.getNoEmoji());
-            message.addReactions(ynStoryObject.getReturnEmoji());
-        }else if(text.split("-")[1].equals("TY")){
-            int index = Integer.parseInt(text.split("-")[0]);
-            TYStoryObject tyStoryObject = (TYStoryObject) StoryDatabase.getStoryObjectByIndex(index);
-            message.addReactions(tyStoryObject.getReturnEmoji());
+        if(text.contains("-")) {
+            if (text.split("-")[1].equals("YN")) {
+                int index = Integer.parseInt(text.split("-")[0]);
+                YNStoryObject ynStoryObject = (YNStoryObject) StoryDatabase.getStoryObjectByIndex(index);
+                message.addReactions(ynStoryObject.getYesEmoji());
+                message.addReactions(ynStoryObject.getNoEmoji());
+                message.addReactions(ynStoryObject.getReturnEmoji());
+            } else if (text.split("-")[1].equals("TY")) {
+                int index = Integer.parseInt(text.split("-")[0]);
+                TYStoryObject tyStoryObject = (TYStoryObject) StoryDatabase.getStoryObjectByIndex(index);
+                message.addReactions(tyStoryObject.getReturnEmoji());
+            }
+        }else if(text.contains("@")){
+            message.addReactions("❌");
         }
 
     }

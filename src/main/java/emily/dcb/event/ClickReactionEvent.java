@@ -70,6 +70,11 @@ public class ClickReactionEvent implements ReactionAddListener {
         }
 
         String text = footerText.get();
+
+        if(!text.contains("-")){
+            return;
+        }
+
         if(text.split("-")[1].equals("YN")){
             int index = Integer.parseInt(text.split("-")[0]);
             YNStoryObject object = (YNStoryObject) StoryDatabase.getStoryObjectByIndex(index);
